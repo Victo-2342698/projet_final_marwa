@@ -1,0 +1,148 @@
+openapi: 3.0.0
+info:
+  title: API Refuge Chats - Marwa
+  version: "1.0.0"
+  description: >
+    Documentation de l'API pour la gestion des chats du refuge.
+    Toutes les routes sont sécurisées avec validations Mongoose
+    et messages d'erreur personnalisés en français.
+
+servers:
+  - url: https://ton-api.netlify.app/.netlify/functions/api
+    description: Serveur Netlify
+  - url: http://localhost:3000/api
+    description: Serveur local
+
+paths:
+
+  /chats/all:
+    get:
+      summary: Obtenir tous les chats
+      responses:
+        "200":
+          description: Liste des chats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Chat"
+
+  /chats/{id}:
+    get:
+      summary: Obtenir un chat selon son ID interne (refuge)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Chat trouvé
+        "404":
+          description: Chat non trouvé
+
+  /chats/filtrer:
+    get:
+      summary: Obtenir les chats filtrés
+      parameters:
+        - name: race
+          in: query
+          schema: { type: string }
+        - name: sexe
+          in: query
+          schema: { type: string }
+        - name: adopte
+          in: query
+          schema: { type: boolean }
+        - name: minAge
+          in: query
+          schema: { type: integer }
+        - name: maxAge
+          in: query
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Liste filtrée
+          
+  /chats/add:
+    post:
+      summary: Ajouter un chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Chat"
+      responses:
+        "201":
+          description: Chat ajouté
+        "400":
+          description: Erreur de validation
+
+  /chats/update/{id}:
+    put:
+      summary: Mettre à jour un chat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Chat"
+      responses:
+        "200":
+          description: Chat mis à jour
+        "404":
+          description: Chat non trouvé
+
+  /chats/delete/{id}:
+    delete:
+      summary: Supprimer un chat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Chat supprimé
+        "404":
+          description: Chat non trouvé
+
+components:
+  schemas:
+    Chat:
+      type: object
+      required:
+        - id
+        - nom
+        - age
+        - race
+        - sexe
+        - description
+        - images
+        - dateArrivee
+        - sterilise
+        - vaccine
+      properties:
+        id: { type: integer }
+        nom: { type: string }
+        age: { type: integer }
+        race: { type: string }
+        sexe: { type: string }
+        description: { type: string }
+        images:
+          type: array
+          items: { type: string }
+        adopte: { type: boolean }
+        dateArrivee: { type: string, format: date }
+        sterilise: { type: boolean }
+        vaccine: { type: boolean }

@@ -1,0 +1,13 @@
+[build]
+command = "npm install && npm run build"
+functions = "functions"
+[functions]
+external_node_modules = ["express"]
+# Ajout de la documentation de l'interface logicielle
+included_files=["./functions/index.html"]
+node_bundler = "esbuild"
+[[redirects]]
+force = true
+from = "/*"
+status = 200
+to = "/.netlify/functions/api/:splat"
