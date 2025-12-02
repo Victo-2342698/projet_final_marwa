@@ -5,7 +5,6 @@ import express, { Request, Response, NextFunction } from 'express';
 import logger from 'jet-logger';
 
 import BaseRouter from '@src/routes';
-
 import Paths from '@src/common/constants/Paths';
 import ENV from '@src/common/constants/ENV';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
@@ -19,28 +18,25 @@ import { NodeEnvs } from '@src/common/constants';
 const app = express();
 
 // **** Middleware **** //
-
-// Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Show routes called in console during development
+// Routes log en DEV
 if (ENV.NodeEnv === NodeEnvs.Dev) {
   app.use(morgan('dev'));
 }
 
-// Security
+// Sécurité
 if (ENV.NodeEnv === NodeEnvs.Production) {
-  // eslint-disable-next-line n/no-process-env
   if (!process.env.DISABLE_HELMET) {
     app.use(helmet());
   }
 }
 
-// Add APIs, must be after middleware
+// API principale (toutes les routes de chats)
 app.use(Paths.Chats.Base, BaseRouter);
 
-// Add error handler
+// **** Error Handler **** //
 app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   if (ENV.NodeEnv !== NodeEnvs.Test.valueOf()) {
     logger.err(err, true);
@@ -53,35 +49,24 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   return next(err);
 });
 
-// **** FrontEnd Content **** //
+// **** Documentation API **** //
 
-// Set views directory (html)
+// dossier des vues
 const viewsDir = path.join(__dirname, 'views');
 app.set('views', viewsDir);
 
-// Set static directory (js and css).
+// dossier static
 const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir));
 
-// Nav to users pg by default
-app.get('/', (_: Request, res: Response) => {
-  return res.redirect('/users');
-});
-
-// Redirect to login if not logged in.
-app.get('/users', (_: Request, res: Response) => {
-  return res.sendFile('users.html', { root: viewsDir });
-});
-
-// rend disponible la documentation de l'interface logicielle
-app.get('/api-docs/', (req, res) => {
-  res.set('Content-Security-Policy', 'script-src blob:');
-  res.set('Content-Security-Policy', 'worker-src blob:');
+// DOCUMENTATION (Swagger-like)
+app.get('/api-docs', (req, res) => {
+  res.set('Content-Security-Policy', 'script-src blob:; worker-src blob:;');
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// redirige vers api-docs
-app.get('/', (req, res) => {
+// PAGE D'ACCUEIL → REDIRECT API DOCS
+app.get('/', (_: Request, res: Response) => {
   res.redirect('/api-docs');
 });
 
