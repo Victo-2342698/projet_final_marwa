@@ -2,7 +2,7 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
 import nodePlugin from 'eslint-plugin-n';
-import { defineConfig } from 'eslint/config'
+import { defineConfig } from 'eslint/config';
 
 export default defineConfig(
   eslint.configs.recommended,
@@ -10,16 +10,13 @@ export default defineConfig(
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
-    ignores: [
-      '**/node_modules/*',
-      '**/*.mjs',
-      '**/*.js',
-    ],
+    ignores: ['**/node_modules/*', '**/*.mjs', '**/*.js'],
   },
   {
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json',
+        tsconfigRootDir: process.cwd(), // AJOUTER CETTE LIGNE EN WINDOWS
         warnOnUnsupportedTypeScriptVersion: false,
       },
     },
@@ -40,10 +37,12 @@ export default defineConfig(
       '@typescript-eslint/no-confusing-void-expression': 0,
       '@typescript-eslint/no-unnecessary-condition': 0,
       '@typescript-eslint/restrict-template-expressions': [
-        'error', { allowNumber: true },
+        'error',
+        { allowNumber: true },
       ],
       '@typescript-eslint/restrict-plus-operands': [
-        'warn', { allowNumberAndString: true },
+        'warn',
+        { allowNumberAndString: true },
       ],
       '@typescript-eslint/no-unused-vars': [
         'warn',
@@ -58,39 +57,42 @@ export default defineConfig(
       'max-len': [
         'warn',
         {
-          'code': 80,
+          code: 80,
         },
       ],
       '@stylistic/semi': ['warn', 'always'],
-      '@stylistic/member-delimiter-style': ['warn', {
-        'multiline': {
-          'delimiter': 'comma',
-          'requireLast': true,
-        },
-        'singleline': {
-          'delimiter': 'comma',
-          'requireLast': false,
-        },
-        'overrides': {
-          'interface': {
-            'singleline': {
-              'delimiter': 'semi',
-              'requireLast': false,
-            },
-            'multiline': {
-              'delimiter': 'semi',
-              'requireLast': true,
+      '@stylistic/member-delimiter-style': [
+        'warn',
+        {
+          multiline: {
+            delimiter: 'comma',
+            requireLast: true,
+          },
+          singleline: {
+            delimiter: 'comma',
+            requireLast: false,
+          },
+          overrides: {
+            interface: {
+              singleline: {
+                delimiter: 'semi',
+                requireLast: false,
+              },
+              multiline: {
+                delimiter: 'semi',
+                requireLast: true,
+              },
             },
           },
         },
-      }],
+      ],
       '@typescript-eslint/no-non-null-assertion': 0,
       '@typescript-eslint/no-unused-expressions': 'warn',
       'comma-dangle': ['warn', 'always-multiline'],
       'no-console': 1,
       'no-extra-boolean-cast': 0,
-      'indent': ['warn', 2],
-      'quotes': ['warn', 'single'],
+      indent: ['warn', 2],
+      quotes: ['warn', 'single'],
       'n/no-process-env': 1,
       'n/no-missing-import': 0,
       'n/no-unpublished-import': 0,

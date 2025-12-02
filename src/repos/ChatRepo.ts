@@ -38,10 +38,11 @@ async function getFiltres(filtres: {
 async function add(chat: IChat): Promise<IChat> {
   try {
     return await ChatRepo.add(chat);
-  } catch (err: any) {
-    throw new Error(
-      `Erreur lors de l'ajout du chat : ${err.message ?? 'Erreur inconnue'}`,
-    );
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw new Error('Erreur inconnue');
   }
 }
 
@@ -59,12 +60,11 @@ async function exists(id: number): Promise<boolean> {
 async function update(id: number, chat: Partial<IChat>): Promise<IChat | null> {
   try {
     return await ChatRepo.update(id, chat);
-  } catch (err: any) {
-    throw new Error(
-      `Erreur lors de la mise à jour du chat : ${
-        err.message ?? 'Erreur inconnue'
-      }`,
-    );
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
+    throw new Error('Erreur inconnue');
   }
 }
 

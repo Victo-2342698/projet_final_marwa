@@ -38,7 +38,7 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
 }
 
 // Add APIs, must be after middleware
-app.use(Paths.Base, BaseRouter);
+app.use(Paths.Chats.Base, BaseRouter);
 
 // Add error handler
 app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
